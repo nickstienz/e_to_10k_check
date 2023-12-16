@@ -1,38 +1,37 @@
 use std::fs::File;
-use std::io::{BufRead, BufReader};
+use std::io::Read;
 
 fn main() {
-    // Read the contents of check.txt
-    let check_file = File::open("check.txt").expect("Unable to open check.txt");
-    let check_reader = BufReader::new(check_file);
+    // Get words in check.txt
+    let mut check_file = File::open("check.txt").unwrap();
+    let mut check_buffer = String::new();
+    check_file.read_to_string(&mut check_buffer).unwrap();
+    let words: Vec<&str> = check_buffer
+        .split_whitespace()
+        .map(|word| word.trim_matches(|c: char| !c.is_alphanumeric()))
+        .collect();
 
-    // Read the first 10k digits of e from e_to_10k.txt
-    let e_file = File::open("e_to_10k.txt").expect("Unable to open e_to_10k.txt");
-    let e_reader = BufReader::new(e_file);
+    // Create Vec of 10,000 numbers from digits in e (Euler's number)
+    let mut e_file = File::open("e_to_10k.txt").unwrap();
+    let mut e_buffer = String::with_capacity(10_000);
+    e_file.read_to_string(&mut e_buffer).unwrap();
+    let e_vec: Vec<usize> = e_buffer
+        .chars()
+        .filter_map(|c| c.to_digit(10).map(|d| d as usize))
+        .filter(|&d| d != 0)
+        .collect();
 
-    // Check if the length of each word matches the corresponding digit in e
-    for (line_num, (check_line, e_line)) in check_reader.lines().zip(e_reader.lines()).enumerate() {
-        let check_content = check_line.expect("Error reading line from check.txt");
-        let e_content = e_line.expect("Error reading line from e_to_10k.txt");
-
-        let words: Vec<&str> = check_content
-            .split_whitespace()
-            .map(|word| word.trim_matches(|c: char| !c.is_alphanumeric()))
-            .collect();
-        let e_digits: Vec<char> = e_content.chars().take(10000).collect();
-
-        for (word, &digit) in words.iter().zip(e_digits.iter()) {
-            let word_length = word.len();
-
-            if word_length != digit.to_digit(10).expect("Invalid digit in e") as usize {
-                println!(
-                    "Line {}: Mismatch for Word: {}, Length: {}, Digit: {}",
-                    line_num + 1,
-                    word,
-                    word_length,
-                    digit
-                );
-            }
+    // Check if word length match digit in e
+    for (pos, (word, &digit)) in words.iter().zip(e_vec.iter()).enumerate() {
+        let len = word.len();
+        if len != digit {
+            println!(
+                "Mismatch for Word at {}: {}, Length: {}, Digit: {}",
+                pos + 1,
+                word,
+                len,
+                digit
+            );
         }
     }
 }

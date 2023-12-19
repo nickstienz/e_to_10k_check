@@ -10,4 +10,10 @@ impl<'a> Lexer<'a> {
             position: 0,
         }
     }
+
+    pub fn next(&mut self) -> Option<&char> {
+        let character = self.characters.get(self.position);
+        self.position += 1;
+        character
+    }
 }

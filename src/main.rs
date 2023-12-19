@@ -12,22 +12,16 @@ fn main() {
         .collect();
 
     let text = file_to_chars("check.txt");
-    let lexer = Lexer::new(&text);
+    let mut lexer = Lexer::new(&text);
 
-    /* TODO: Remake this logic vvvvv
-    for (pos, (word, &digit)) in words.iter().zip(e_vec.iter()).enumerate() {
-        let len = word.len();
-        if len != digit {
-            println!(
-                "Mismatch for Word at {}: {}, Length: {}, Digit: {}",
-                pos + 1,
-                word,
-                len,
-                digit
-            );
-        }
+    loop {
+        let current = match lexer.next() {
+            Some(c) => c,
+            None => break,
+        };
+
+        print!("{current}");
     }
-    */
 }
 
 fn file_to_chars(path: &str) -> Vec<char> {

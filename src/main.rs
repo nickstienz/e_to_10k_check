@@ -1,24 +1,19 @@
 use std::fs::File;
 use std::io::Read;
 
+mod lexer;
+
 fn main() {
-    // Get words in check.txt
-    let mut check_file = File::open("check.txt").unwrap();
-    let mut check_buffer = String::new();
-    check_file.read_to_string(&mut check_buffer).unwrap();
-    let words: Vec<&str> = check_buffer
-        .split_whitespace()
-        .map(|word| word.trim_matches(|c: char| !c.is_alphanumeric()))
-        .collect();
+    // Get words in the input file
+    let text = file_to_chars("check.txt");
+    let words: Vec<&str> = parse(String::from("test"));
 
     // Create Vec of 10,000 numbers from digits in e (Euler's number)
-    let mut e_file = File::open("e_to_10k.txt").unwrap();
-    let mut e_buffer = String::with_capacity(10_000);
-    e_file.read_to_string(&mut e_buffer).unwrap();
-    let e_vec: Vec<usize> = e_buffer
-        .chars()
-        .filter_map(|c| c.to_digit(10).map(|d| d as usize))
-        .filter(|&d| d != 0)
+    let e_chars = file_to_chars("e_to_10k.txt");
+    let e_vec: Vec<usize> = e_chars
+        .iter()
+        .filter_map(|c| c.to_digit(10))
+        .map(|d| d as usize)
         .collect();
 
     // Check if word length match digit in e
@@ -34,4 +29,16 @@ fn main() {
             );
         }
     }
+}
+
+fn parse(t: String) -> Vec<&'static str> {
+    vec!["Test"]
+}
+
+fn file_to_chars(path: &str) -> Vec<char> {
+    let file = File::open(path).expect("Could not open file!");
+    file.bytes()
+        .into_iter()
+        .map(|b| b.unwrap() as char)
+        .collect::<Vec<char>>()
 }

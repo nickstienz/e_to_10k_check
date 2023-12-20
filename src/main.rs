@@ -9,6 +9,7 @@ fn main() {
         .iter()
         .filter_map(|c| c.to_digit(10))
         .map(|d| d as usize)
+        .filter(|&d| d != 0)
         .collect();
 
     let args: Vec<String> = std::env::args().collect();
@@ -20,15 +21,22 @@ fn main() {
     let text = file_to_chars(path);
     let mut lexer = Lexer::new(&text);
 
+    let mut found = false;
     loop {
         let (word, len, idx) = match lexer.next() {
             Some(w) => w,
             None => break,
         };
 
-        if len != e_vec[idx - 1] {
-            println!("Word {} ({}) {} => {}", idx, word, len, e_vec[idx - 1]);
+        let digit = e_vec[idx - 1];
+        if len != digit {
+            found = true;
+            println!("Word {} ({}) {} => {}", idx, word, len, digit);
         }
+    }
+
+    if !found {
+        println!("No issues found!");
     }
 }
 

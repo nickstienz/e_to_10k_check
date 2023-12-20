@@ -3,7 +3,7 @@ pub struct Lexer<'a> {
     position: usize,
     lexeme: String,
     word_len: usize,
-    words: usize,
+    index: usize,
 }
 
 impl<'a> Lexer<'a> {
@@ -13,7 +13,7 @@ impl<'a> Lexer<'a> {
             position: 0,
             lexeme: String::new(),
             word_len: 0,
-            words: 0,
+            index: 0,
         }
     }
 
@@ -35,10 +35,10 @@ impl<'a> Lexer<'a> {
                 }
                 _ => {
                     if self.lexeme.len() > 0 {
-                        self.words += 1;
+                        self.index += 1;
                         let lexeme = self.lexeme.clone();
                         let word_len = self.word_len;
-                        let words = self.words;
+                        let words = self.index;
                         self.word_len = 0;
                         self.lexeme.clear();
                         return Some((lexeme, word_len, words));

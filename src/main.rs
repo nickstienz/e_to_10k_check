@@ -41,8 +41,9 @@ fn main() {
 }
 
 fn file_to_chars(path: &str) -> Vec<char> {
-    let file = File::open(path).expect("Could not open file!");
-    file.bytes()
+    File::open(path)
+        .expect("Could not open file!")
+        .bytes()
         .into_iter()
         .map(|b| b.unwrap() as char)
         .collect::<Vec<char>>()
